@@ -71,7 +71,7 @@ class JsonFormat:
     time = dict['time']
     delay = dict['delay']
     vehicle = dict['vehicle']
-    direction = self.__convert_station(dict['direction'])
+    direction = Station(dict['direction']['name'], *[None]*4)  # Direction is not a real station
     return clazz(station, platform, time, delay, vehicle, direction)
 
   def __convert_arrival(self, dict):
