@@ -21,40 +21,43 @@
 # THE SOFTWARE.
 
 class iRailError(Exception):
-  """Class representing an error in the iRail API"""
-  def __init__(self, cause):
-    self.__cause = cause
+    """Class representing an error in the iRail API"""
 
-  def cause(self):
-    return self.__cause
+    def __init__(self, cause):
+        self.__cause = cause
 
-  def __str__(self):
-    return "iRailError" + " with cause: " + str(self.cause())
+    def cause(self):
+        return self.__cause
+
+    def __str__(self):
+        return "iRailError" + " with cause: " + str(self.cause())
+
 
 class HTTPError(iRailError):
-  def __init__(self, cause):
-    iRailError.__init__(self, cause)
+    def __init__(self, cause):
+        iRailError.__init__(self, cause)
 
-  def code(self):
-    return self.cause().code
+    def code(self):
+        return self.cause().code
 
-  def message(self):
-    return self.cause().msg
+    def message(self):
+        return self.cause().msg
 
-  def __str__(self):
-    return "HTTPError | code: " + str(self.code()) + " | message: " + self.message()
+    def __str__(self):
+        return "HTTPError | code: " + str(self.code()) + " | message: " + self.message()
+
 
 class ClientError(HTTPError):
-  def __init__(self, cause):
-    HTTPError.__init__(self, cause)
+    def __init__(self, cause):
+        HTTPError.__init__(self, cause)
 
-  def __str__(self):
-    return "ClientError | code: " + str(self.code()) + " | message: " + self.message()
+    def __str__(self):
+        return "ClientError | code: " + str(self.code()) + " | message: " + self.message()
+
 
 class ServerError(HTTPError):
-  def __init__(self, cause):
-    HTTPError.__init__(self, cause)
+    def __init__(self, cause):
+        HTTPError.__init__(self, cause)
 
-  def __str__(self):
-    return "ServerError | code: " + str(self.code()) + " | message: " + self.message()
-
+    def __str__(self):
+        return "ServerError | code: " + str(self.code()) + " | message: " + self.message()

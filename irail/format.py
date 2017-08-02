@@ -24,73 +24,73 @@ import json
 
 from .model import *
 
+
 class JsonFormat:
+    def __init__(self):
+        self.__format = "json"
 
-  def __init__(self):
-    self.__format = "json"
+    def format(self):
+        return self.__format
 
-  def format(self):
-    return self.__format
+    def __str__(self):
+        return self.format()
 
-  def __str__(self):
-    return self.format()
+    def __convert_station_list(self, dict):
+        stations = []
+        for s in dict['station']:
+            stations.append(self.__convert_station(s))
+        return StationList(dict['timestamp'], dict['version'], stations)
 
-  def __convert_station_list(self, dict):
-    stations = []
-    for s in dict['station']:
-      stations.append(self.__convert_station(s))
-    return StationList(dict['timestamp'], dict['version'], stations)
+    def __convert_station(self, dict):
+        return Station(dict['name'], dict['standardname'], dict['id'], dict['locationX'], dict['locationY'])
 
-  def __convert_station(self, dict):
-    return Station(dict['name'], dict['standardname'], dict['id'], dict['locationX'], dict['locationY'])
+    def parse_stations(self, response):
+        return self.__convert_station_list(json.load(response))
 
-  def parse_stations(self, response):
-    return self.__convert_station_list(json.load(response))
+    def __convert_schedule_list(self, dict):
+        schedules = []
+        for s in dict['connection']:
+            schedules.append(self.__convert_schedule(s))
+        return ConnectionList(dict['timestamp'], dict['version'], schedules)
 
-  def __convert_schedule_list(self, dict):
-    schedules = []
-    for s in dict['connection']:
-      schedules.append(self.__convert_schedule(s))
-    return ConnectionList(dict['timestamp'], dict['version'], schedules)
+    def __convert_schedule(self, dict):
+        departure = self.__convert_departure(dict['departure'])
+        if 'vias' in dict:
+            vias = self.__convert_vias(dict['vias'])
+        else:
+            vias = None
+        arrival = self.__convert_arrival(dict['arrival'])
+        return Connection(dict['id'], departure, vias, arrival, dict['duration'])
 
-  def __convert_schedule(self, dict):
-    departure = self.__convert_departure(dict['departure'])
-    if 'vias' in dict:
-      vias = self.__convert_vias(dict['vias'])
-    else:
-      vias = None
-    arrival = self.__convert_arrival(dict['arrival'])
-    return Connection(dict['id'], departure, vias, arrival, dict['duration'])
+    def __convert_departure(self, dict):
+        return self.__convert_connection_event(dict, Departure)
 
-  def __convert_departure(self, dict):
-    return self.__convert_connection_event(dict, Departure)
+    def __convert_connection_event(self, dict, clazz):
+        station = self.__convert_station(dict['stationinfo'])
+        platform = dict['platform']  # TODO use platforminfo
+        time = dict['time']
+        delay = dict['delay']
+        vehicle = dict['vehicle']
+        direction = Station(dict['direction']['name'], *[None] * 4)  # Direction is not a real station
+        return clazz(station, platform, time, delay, vehicle, direction)
 
-  def __convert_connection_event(self, dict, clazz):
-    station = self.__convert_station(dict['stationinfo'])
-    platform = dict['platform'] # TODO use platforminfo
-    time = dict['time']
-    delay = dict['delay']
-    vehicle = dict['vehicle']
-    direction = Station(dict['direction']['name'], *[None]*4)  # Direction is not a real station
-    return clazz(station, platform, time, delay, vehicle, direction)
+    def __convert_arrival(self, dict):
+        return self.__convert_connection_event(dict, Arrival)
 
-  def __convert_arrival(self, dict):
-    return self.__convert_connection_event(dict, Arrival)
+    def __convert_vias(self, dict):
+        return dict
 
-  def __convert_vias(self, dict):
-    return dict
+    def parse_schedules(self, response):
+        return self.__convert_schedule_list(json.load(response))
 
-  def parse_schedules(self, response):
-    return self.__convert_schedule_list(json.load(response))
+    def parse_liveboard(self, response):
+        return self.__convert_liveboard(json.load(response))
 
-  def parse_liveboard(self, response):
-      return self.__convert_liveboard(json.load(response))
+    def __convert_liveboard(self, dict):
+        return ObjectFactory(dict['departures']['departure'])
 
-  def __convert_liveboard(self, dict):
-      return ObjectFactory(dict['departures']['departure'])
+    def parse_vehicle(self, response):
+        return self.__convert_vehicle(json.load(response))
 
-  def parse_vehicle(self, response):
-      return self.__convert_vehicle(json.load(response))
-
-  def __convert_vehicle(self, dict):
-      return ObjectFactory(dict['vehicleinfo'])
+    def __convert_vehicle(self, dict):
+        return ObjectFactory(dict['vehicleinfo'])
