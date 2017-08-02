@@ -32,7 +32,7 @@ class ObjectFactory(object):
       return [ObjectFactory(e) for e in d] #TODO add tuple, set, frozenset
     elif isinstance(d, dict):
       obj = object.__new__(cls)
-      for k, v in d.iteritems():
+      for k, v in d.items():
         setattr(obj, k, ObjectFactory(v))
       return obj
     else:
@@ -40,7 +40,7 @@ class ObjectFactory(object):
 
   def __repr__(self):
     return '<%s>' % str('\n '.join('%s : %s' %
-      (k, repr(v)) for (k, v) in self.__dict__.iteritems()))
+      (k, repr(v)) for (k, v) in self.__dict__.items()))
   
 class ResultList:
   def __init__(self, timestamp, version):

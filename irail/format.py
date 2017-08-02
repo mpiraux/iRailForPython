@@ -22,7 +22,7 @@
 
 import json
 
-from model import *
+from .model import *
 
 class JsonFormat:
 
@@ -55,7 +55,7 @@ class JsonFormat:
 
   def __convert_schedule(self, dict):
     departure = self.__convert_departure(dict['departure'])
-    if dict.has_key('vias'):
+    if 'vias' in dict:
       vias = self.__convert_vias(dict['vias'])
     else:
       vias = None

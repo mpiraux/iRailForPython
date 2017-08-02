@@ -20,10 +20,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import urllib2
-from model import *
-from format import *
-from exception import *
+import urllib.request, urllib.error, urllib.parse
+from .model import *
+from .format import *
+from .exception import *
 
 #curl 'api.irail.be/liveboard/?station=gentbruggee&format=json'
 
@@ -65,11 +65,11 @@ class iRailAPI:
     url += "?format=" + str(self.format())
     url += "&lang=" + self.lang()
     if args:
-      for key in args.keys():
+      for key in list(args.keys()):
         url += "&" + key + "=" + args[key]
     try:
-      return urllib2.urlopen(url)
-    except urllib2.HTTPError as e:
+      return urllib.request.urlopen(url)
+    except urllib.error.HTTPError as e:
       if e.code >= 400 and e.code < 500:
         raise ClientError(e)
       elif e.code >= 500 and e.code < 500:

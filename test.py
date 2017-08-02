@@ -27,35 +27,35 @@ from irail.api import iRailAPI
 def test_getstations():
   api = iRailAPI()
   r = api.get_stations()
-  print "Version: " + r.version()
-  print "Timestamp: " + r.timestamp()
+  print("Version: " + r.version())
+  print("Timestamp: " + r.timestamp())
   for station in r.stations():
-    print station
+    print(station)
 
 def test_searchstations():
   api = iRailAPI()
   stations = api.search_stations("bru")
-  print "--- Stations starting with bru ---"
+  print("--- Stations starting with bru ---")
   for station in stations:
-    print station
+    print(station)
 
 def test_getschedules():
   api = iRailAPI()
   schedules = api.get_schedules_by_names("Courtrai", "Leuven")
   for schedule in schedules.connections():
-    print schedule
+    print(schedule)
 
 def test_getliveboard():
   api = iRailAPI()
   schedule = api.get_liveboard_by_name("Gentbrugge")
-  print schedule
+  print(schedule)
   #schedule = api.get_liveboard_by_id("BE.NMBS.008893179")
   #print schedule
 
 def test_getvehicle():
   api = iRailAPI()
   schedule = api.get_vehicle_by_id("BE.NMBS.L584")
-  print schedule
+  print(schedule)
 
 if __name__=="__main__":
 #  test_getstations()
