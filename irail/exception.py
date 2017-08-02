@@ -19,45 +19,25 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
+import urllib.error
+
 
 class iRailError(Exception):
     """Class representing an error in the iRail API"""
-
-    def __init__(self, cause):
-        self.__cause = cause
-
-    def cause(self):
-        return self.__cause
+    def __init__(self, cause: urllib.error.HTTPError):
+        self.cause = cause
+        self.code = cause.code
+        self.message = cause.msg
 
     def __str__(self):
-        return "iRailError" + " with cause: " + str(self.cause())
+        return "iRailError" + " with cause: " + str(self.cause)
 
 
-class HTTPError(iRailError):
-    def __init__(self, cause):
-        iRailError.__init__(self, cause)
-
-    def code(self):
-        return self.cause().code
-
-    def message(self):
-        return self.cause().msg
-
+class ClientError(iRailError):
     def __str__(self):
-        return "HTTPError | code: " + str(self.code()) + " | message: " + self.message()
+        return "ClientError | code: " + str(self.code) + " | message: " + self.message
 
 
-class ClientError(HTTPError):
-    def __init__(self, cause):
-        HTTPError.__init__(self, cause)
-
+class ServerError(iRailError):
     def __str__(self):
-        return "ClientError | code: " + str(self.code()) + " | message: " + self.message()
-
-
-class ServerError(HTTPError):
-    def __init__(self, cause):
-        HTTPError.__init__(self, cause)
-
-    def __str__(self):
-        return "ServerError | code: " + str(self.code()) + " | message: " + self.message()
+        return "ServerError | code: " + str(self.code) + " | message: " + self.message

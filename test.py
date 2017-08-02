@@ -26,10 +26,10 @@ from irail.api import iRailAPI
 
 def test_getstations():
     api = iRailAPI()
-    r = api.get_stations()
-    print("Version: " + r.version())
-    print("Timestamp: " + r.timestamp())
-    for station in r.stations():
+    stations = api.get_stations()
+    print("Version: " + stations.version)
+    print("Timestamp: " + stations.timestamp)
+    for station in stations:
         print(station)
 
 
@@ -44,7 +44,7 @@ def test_searchstations():
 def test_getschedules():
     api = iRailAPI()
     schedules = api.get_schedules_by_names("Courtrai", "Leuven")
-    for schedule in schedules.connections():
+    for schedule in schedules:
         print(schedule)
 
 
