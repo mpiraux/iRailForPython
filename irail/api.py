@@ -22,6 +22,7 @@
 
 import urllib.error
 import urllib.parse
+from urllib.parse import quote
 import urllib.request
 
 import irail.format
@@ -45,7 +46,7 @@ class iRailAPI:
     def do_request(self, method, **kwargs):
         url = '{}{}/?format={}&lang={}'.format(BASE_URL, method, self.formatter.format_id, self.lang)
         for key, value in kwargs.items():
-            url += '&{}={}'.format(key, value)
+            url += ('&{}={}'.format(quote(key), quote(value)))
         try:
             return urllib.request.urlopen(url).read().decode('utf-8')
         except urllib.error.HTTPError as e:
@@ -76,7 +77,6 @@ class iRailAPI:
 
     def get_liveboard_by_name(self, name, date=None, time=None, arrdep='DEP'):
         response = self.do_request(URLS['liveboard'], station=name)
-        print(response)
         return self.formatter.parse_liveboard(response)
 
     def get_liveboard_by_id(self, station_id, date=None, time=None, arrdep='DEP'):
