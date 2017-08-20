@@ -55,6 +55,14 @@ class StationList(ResultList):
     def __iter__(self):
         return iter(self.stations)
 
+    def __str__(self):
+        return '[' + ', '.join(str(station) for station in self.stations) + ']'
+
+    def __repr__(self):
+        return '{}(timestamp={}, version={}, stations={})'.format(self.__class__.__name__,
+            *(repr(e) for e in (self.timestamp, self.version, self.stations))
+        )
+
 
 class Station:
     def __init__(self, name, standardname, id, locationX, locationY, **kwargs):
@@ -67,6 +75,11 @@ class Station:
     def __str__(self):
         return "Station {} | {} @ ({}, {})".format(self.id, self.name, self.locationY, self.locationX)
 
+    def __repr__(self):
+        return '{}(name={}, standardname={}, id={}, locationX={}, locationY={})'.format(self.__class__.__name__,
+            *(repr(e) for e in (self.name, self.standardname, self.id, self.locationX, self.locationY))
+        )
+
 
 class ConnectionList(ResultList):
     def __init__(self, timestamp, version, connections, **kwargs):
@@ -75,6 +88,11 @@ class ConnectionList(ResultList):
 
     def __iter__(self):
         return iter(self.connections)
+
+    def __repr__(self):
+        return '{}(timestamp={}, version={}, connections={})'.format(self.__class__.__name__,
+            *(repr(e) for e in (self.timestamp, self.version, self.connections))
+        )
 
 
 class Connection:
@@ -93,6 +111,11 @@ class Connection:
   duration: {}"""
         return s.format(self.id, self.departure, self.arrival, self.vias, self.duration)
 
+    def __repr__(self):
+        return '{}(id={}, departure={}, arrival={}, vias={}, duration={})'.format(self.__class__.__name__,
+            *(repr(e) for e in (self.id, self.departure, self.arrival, self.vias, self.duration))
+        )
+
 
 class ConnectionEvent:
     def __init__(self, station, platform, time, delay, vehicle, direction, **kwargs):
@@ -105,6 +128,11 @@ class ConnectionEvent:
 
     def __str__(self):
         return "@{} (+{}) -> {}".format(self.time, self.delay, self.station)
+
+    def __repr__(self):
+        return '{}(station={}, platform={}, time={}, delay={}, vehicle={}, direction={})'.format(self.__class__.__name__,
+             *(repr(e) for e in (self.station, self.platform, self.time, self.delay, self.vehicle, self.direction))
+        )
 
 
 class Arrival(ConnectionEvent):
