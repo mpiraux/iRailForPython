@@ -24,6 +24,9 @@
 # The iRail api returns all ints and timestamps as strings
 # so the python api makes the same mistake not my fault!
 import collections
+from datetime import datetime, timedelta
+
+GeographicCoordinate = collections.namedtuple('GeographicCoordinate', ['longitude', 'latitude'])
 
 
 def as_obj(c):
@@ -43,8 +46,9 @@ def as_obj(c):
 
 class ResultList:
     def __init__(self, timestamp, version):
-        self.timestamp = timestamp
-        self.version = version
+        self.timestamp = int(timestamp)
+        self.date = datetime.fromtimestamp(self.timestamp)
+        self.version = tuple(int(s) for s in version.split('.'))
 
 
 class StationList(ResultList):
@@ -69,8 +73,9 @@ class Station:
         self.name = name
         self.standardname = standardname
         self.id = id
-        self.locationX = locationX
-        self.locationY = locationY
+        self.locationX = float(locationX or 0)
+        self.locationY = float(locationY or 0)
+        self.location = GeographicCoordinate(locationX, locationY)
 
     def __str__(self):
         return "Station {} | {} @ ({}, {})".format(self.id, self.name, self.locationY, self.locationX)
@@ -97,11 +102,12 @@ class ConnectionList(ResultList):
 
 class Connection:
     def __init__(self, id, departure, arrival, duration, vias=None, **kwargs):
-        self.id = id
+        self.id = int(id)
         self.departure = departure
         self.vias = vias
         self.arrival = arrival
-        self.duration = duration
+        self.duration = int(duration)
+        self.duration_timedelta = timedelta(seconds=self.duration)
 
     def __str__(self):
         s = """Connection ({}):
@@ -121,8 +127,10 @@ class ConnectionEvent:
     def __init__(self, station, platform, time, delay, vehicle, direction, **kwargs):
         self.station = station
         self.platform = platform
-        self.time = time
-        self.delay = delay
+        self.time = int(time)
+        self.date = datetime.fromtimestamp(self.time)
+        self.delay = int(delay)
+        self.delay_timedelta = timedelta(seconds=self.delay)
         self.vehicle = vehicle
         self.direction = direction
 
